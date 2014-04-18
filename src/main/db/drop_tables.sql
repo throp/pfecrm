@@ -1,0 +1,16 @@
+DROP TABLE action_log;
+DROP TABLE chemical;
+DROP TABLE contact;
+DROP TABLE crm_user_role;
+DROP TABLE customer_note;
+DROP TABLE customer;
+DROP TABLE employee;
+DROP TABLE inventory_item;
+DROP TABLE job;
+DROP TABLE location_note;
+DROP TABLE location;
+DROP TABLE manufacturer;
+DROP TABLE office;
+DROP TABLE service_call;
+DROP TABLE service;
+DROP TABLE weight;

@@ -1,0 +1,75 @@
+import groovy.sql.Sql
+
+defaultTasks 'compile'
+
+apply plugin: 'java'
+
+def dbProps = [user: 'root', password: 'throp', allowMultiQueries: 'true'] as Properties
+def dbUrl = 'jdbc:mysql://localhost:3306/pfecrm'
+def dbDriver = 'com.mysql.jdbc.Driver'
+
+repositories { 
+  mavenCentral()
+}
+
+configurations {
+    driver
+}
+
+dependencies {
+    driver group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
+}
+
+URLClassLoader loader = GroovyObject.class.classLoader
+configurations.driver.each {File file ->
+    loader.addURL(file.toURL())
+}
+
+dependencies { 
+  compile 'org.hibernate:hibernate-core:3.6.7.Final'
+  testCompile 'junit:junit:4.+'
+}
+
+task hello << {
+  println 'Hello world!'
+}
+
+task compile << { 
+  println 'Compile'
+}
+
+/**
+ * DATABASE TASKS: for creating/deleting tables, constraints, and data
+ */
+task dbTestConnection << { 
+    println """
+Testing database connection...
+  URL: ${dbUrl}
+  User: ${dbProps.user}
+  Password: ${dbProps.password}
+  Driver: ${dbDriver}
+            """
+    def sql = Sql.newInstance(dbUrl, dbProps, dbDriver)
+    println "Tables:"
+    sql.eachRow( 'show tables' ) { println "  $it." }
+
+}
+task dbCreateTables << { 
+    def sql = Sql.newInstance(dbUrl, dbProps, dbDriver)
+    sql.execute(new File('src/main/db/create_tables.sql').text)
+}
+
+task dbInsertDefaultData << { 
+    def sql = Sql.newInstance(dbUrl, dbProps, dbDriver)
+    sql.execute(new File('src/main/db/insert_default_data.sql').text)
+}
+
+task dbDeleteData << { 
+    def sql = Sql.newInstance(dbUrl, dbProps, dbDriver)
+    sql.execute(new File('src/main/db/delete_data.sql').text)
+}
+
+task dbDropTables << { 
+    def sql = Sql.newInstance(dbUrl, dbProps, dbDriver)
+    sql.execute(new File('src/main/db/drop_tables.sql').text)
+}
