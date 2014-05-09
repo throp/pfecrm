@@ -1,3 +1,5 @@
+use pfecrm;
+
 CREATE TABLE address 
 (
 	id bigint primary key auto_increment,
@@ -31,17 +33,25 @@ CREATE TABLE customer
 
 CREATE TABLE location
 (
-	location_id int primary key,
+	id bigint primary key auto_increment,
 	name varchar(50) not null,
 	address_id bigint,
-	contact bigint
+	contact_id bigint,
+	customer_id bigint not null
 );
 
 CREATE TABLE location_note
 (
-	location_note_id int primary key,
+	id bigint primary key,
 	location_id int not null,
 	note text not null,
-	employee_id int not null,
-	entered_date timestamp not null
+	entered_date timestamp not null,
+	employee_id bigint not null
 );
+
+CREATE TABLE employee
+(
+	id bigint primary key,
+	first_name varchar(30) not null,
+	last_name varchar(30) not null
+)

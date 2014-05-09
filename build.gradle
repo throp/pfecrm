@@ -6,7 +6,7 @@ apply plugin: 'war'
 apply plugin: 'jetty'
 
 def dbProps = [user: 'root', password: 'throp', allowMultiQueries: 'true'] as Properties
-def dbUrl = 'jdbc:mysql://localhost:3306/pfecrm'
+def dbUrl = 'jdbc:mysql://localhost:3306/'
 def dbDriver = 'com.mysql.jdbc.Driver'
 def httpPort = 8080
 def stopPort = 9451
@@ -60,22 +60,33 @@ task dbTestConnection << {
     sql.eachRow( 'show tables' ) { println "  $it." }
 }
 
+
+task dbCreateDatabase << { 
+  def sql = Sql.newInstance(dbUrl, dbProps, dbDriver)
+  sql.execute(new File('src/main/db/create_database.sql').text) 
+}
+
+task dbDropDatabase << { 
+  def sql = Sql.newInstance(dbUrl, dbProps, dbDriver)
+  sql.execute(new File('src/main/db/drop_database.sql').text) 
+}
+
 task dbCreateTables << { 
-    def sql = Sql.newInstance(dbUrl, dbProps, dbDriver)
-    sql.execute(new File('src/main/db/create_tables.sql').text)
+  def sql = Sql.newInstance(dbUrl, dbProps, dbDriver)
+  sql.execute(new File('src/main/db/create_tables.sql').text)
 }
 
 task dbDeleteData << { 
-    def sql = Sql.newInstance(dbUrl, dbProps, dbDriver)
-    sql.execute(new File('src/main/db/delete_data.sql').text)
+  def sql = Sql.newInstance(dbUrl, dbProps, dbDriver)
+  sql.execute(new File('src/main/db/delete_data.sql').text)
 }
 
 task dbInsertData(dependsOn: 'dbDeleteData') << { 
-    def sql = Sql.newInstance(dbUrl, dbProps, dbDriver)
-    sql.execute(new File('src/main/db/insert_default_data.sql').text)
+  def sql = Sql.newInstance(dbUrl, dbProps, dbDriver)
+  sql.execute(new File('src/main/db/insert_default_data.sql').text)
 }
 
 task dbDropTables << { 
-    def sql = Sql.newInstance(dbUrl, dbProps, dbDriver)
-    sql.execute(new File('src/main/db/drop_tables.sql').text)
+  def sql = Sql.newInstance(dbUrl, dbProps, dbDriver)
+  sql.execute(new File('src/main/db/drop_tables.sql').text)
 }

@@ -1,3 +1,5 @@
+use pfecrm; 
+
 DROP TABLE address;
 DROP TABLE contact;
 DROP TABLE customer;

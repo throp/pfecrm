@@ -1,3 +1,5 @@
+use pfecrm;
+
 delete from address;
 delete from contact;
 delete from customer;
